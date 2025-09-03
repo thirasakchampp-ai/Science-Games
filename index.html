@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมวิทยาศาสตร์ — สายอาชีพ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+            transform: translate3d(0, 0, 0);
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        /* Drag and Drop Styles */
+        .draggable-item {
+            cursor: grab;
+            user-select: none;
+        }
+
+        .dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            background-color: #0f172a;
+            /* slate-900 */
+        }
+
+        .drop-target.drag-over {
+            border-color: #34d399;
+            /* emerald-400 */
+            background-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+
+        .matched {
+            visibility: hidden;
+            /* Hide after animation */
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900">
+    <div
+        class="min-h-screen w-full bg-[radial-gradient(1200px_600px_at_70%_-10%,#0b1220_0%,#0a0f1a_60%)] text-slate-100 selection:bg-emerald-400/30">
+        <div class="mx-auto max-w-4xl px-4 py-8">
+            <!-- Header -->
+            <header class="mb-6 flex items-center justify-between">
+                <div>
+                    <h1
+                        class="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                        เกมวิทยาศาสตร์ — สายอาชีพ
+                    </h1>
+                    <p class="text-slate-400 text-sm">ความรู้วิทยาศาสตร์ระดับ ปวส | 20 วิ ต่อข้อ | คะแนนเต็ม 200</p>
+                </div>
+                <div class="hidden sm:flex items-center gap-2">
+                    <div
+                        class="flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 text-sm">
+                        <span>🏆</span>
+                        <span id="score-display" class="text-slate-200">คะแนน: 0</span>
+                    </div>
+                    <div
+                        class="flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 text-sm">
+                        <span>📈</span>
+                        <span class="text-slate-200">ความคืบหน้า</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Global Progress -->
+            <div class="mb-8">
+                <div class="w-full h-2 bg-slate-700/70 rounded-full overflow-hidden">
+                    <div id="total-progress-bar"
+                        class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all" style="width: 0%">
+                    </div>
+                </div>
+                <div id="total-progress-text" class="mt-2 text-right text-xs text-slate-400">0% เสร็จแล้ว</div>
+            </div>
+
+            <!-- Scenes Container -->
+            <main>
+                <!-- Intro Scene -->
+                <div id="intro-scene">
+                    <div
+                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40 text-center py-12">
+                        <h2 class="text-xl sm:text-2xl font-bold mb-2">พร้อมหรือยัง?</h2>
+                        <p class="text-slate-300 mb-6">เกมมี 2 ด่าน: ตอบคำถาม 10 ข้อ และจับคู่ 10 คู่ (แบ่ง 2 หน้า)</p>
+                        <div class="flex items-center justify-center gap-3">
+                            <button id="start-game-btn"
+                                class="px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all shadow-lg shadow-emerald-900/30">เริ่มเกม</button>
+                            <button id="how-to-play-btn"
+                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">วิธีเล่น</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Scene -->
+                <div id="quiz-scene" class="hidden">
+                    <div
+                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div id="question-counter" class="text-sm text-slate-400 mb-1">ข้อ 1 / 10</div>
+                                <h3 id="question-text" class="text-lg sm:text-xl font-semibold mb-4">...</h3>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-slate-400">เวลาที่เหลือ</div>
+                                <div id="timer-display" class="text-2xl font-extrabold">20s</div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="w-full h-1 bg-slate-700/70 rounded-full overflow-hidden">
+                                <div id="quiz-progress-bar"
+                                    class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all"
+                                    style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div id="quiz-options-container" class="grid gap-3">
+                            <!-- Options will be generated here -->
+                        </div>
+                        <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-2">
+                                <button id="quiz-5050-btn"
+                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">🔎
+                                    50:50</button>
+                                <button id="quiz-add-time-btn"
+                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">⏱️
+                                    +10s</button>
+                            </div>
+                            <button id="quiz-skip-btn"
+                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">ข้ามข้อ
+                                (นับผิด)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Match Scene -->
+                <div id="match-scene" class="hidden">
+                    <div
+                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
+                        <div class="mb-4 flex items-start justify-between">
+                            <div>
+                                <div id="match-page-counter" class="text-sm text-slate-400 mb-1">จับคู่ — หน้า 1 / 2
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-semibold">ลากการ์ดซ้ายไปวางทับคู่ที่ถูกต้อง (เหลือ
+                                    <span id="remaining-pairs">5</span> คู่)</h3>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-slate-400">เวลาที่เหลือ</div>
+                                <div id="match-timer-display" class="text-2xl font-extrabold">20s</div>
+                            </div>
+                        </div>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <!-- Left column -->
+                            <div id="match-left-column" class="grid gap-2">
+                                <!-- Draggable items will be generated here -->
+                            </div>
+                            <!-- Right column -->
+                            <div id="match-right-column" class="grid gap-2">
+                                <!-- Droppable targets will be generated here -->
+                            </div>
+                        </div>
+                        <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-2">
+                                <button id="match-reveal-btn"
+                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">💡
+                                    โชว์คู่ที่ถูก 1 คู่</button>
+                                <button id="match-add-time-btn"
+                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">⏱️
+                                    +10s</button>
+                            </div>
+                            <button id="match-skip-btn"
+                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">ตัดเวลาคู่นี้
+                                (นับผิด)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Scene -->
+                <div id="summary-scene" class="hidden">
+                    <div
+                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40 text-center py-10">
+                        <div class="mb-4 text-sm text-slate-400">จบเกมแล้ว!</div>
+                        <div id="final-score"
+                            class="text-5xl font-black bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                            0 / 200
+                        </div>
+                        <div class="mt-2 text-slate-300">แรงค์ของคุณ: <span id="final-rank"
+                                class="text-2xl font-extrabold text-emerald-300">C</span></div>
+                        <div class="mx-auto mt-6 grid max-w-md grid-cols-2 gap-2 text-left text-sm">
+                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">ใช้ 50:50: <span
+                                    id="summary-quiz50"></span></div>
+                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">ใช้ +10s (ควิซ): <span
+                                    id="summary-quizTime"></span></div>
+                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">โชว์คู่ที่ถูก: <span
+                                    id="summary-matchReveal"></span></div>
+                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">ใช้ +10s (จับคู่): <span
+                                    id="summary-matchTime"></span></div>
+                        </div>
+                        <div class="mt-8 flex items-center justify-center gap-3">
+                            <button id="home-btn"
+                                class="px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all shadow-lg shadow-emerald-900/30">กลับหน้าแรก</button>
+                            <button id="restart-btn"
+                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">เล่นอีกครั้ง</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer class="mt-8 text-center text-xs text-slate-500">
+                © <span id="year"></span> Science Games — UX/UI by Tailwind
+            </footer>
+        </div>
+    </div>
+
+    <!-- Instruction Modal -->
+    <div id="instruction-modal"
+        class="modal-overlay fixed inset-0 bg-black/70 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
+        <div class="modal-content transform scale-95 max-w-md w-full">
+            <div
+                class="rounded-2xl border border-slate-700/60 bg-slate-900 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
+                <h3 class="text-xl font-bold mb-3 text-emerald-400">วิธีเล่น</h3>
+                <ul class="list-disc list-inside text-slate-300 space-y-2 mb-6">
+                    <li>เกมมี 2 ด่าน: ควิซ 10 ข้อ และจับคู่ 10 คู่</li>
+                    <li>แต่ละข้อ/คู่ มีเวลา 20 วินาทีในการตอบ</li>
+                    <li>ยิ่งตอบเร็วยิ่งได้คะแนนโบนัส! (คะแนนเต็ม 200)</li>
+                    <li>มีตัวช่วย 2 อย่างในแต่ละด่าน แต่จะใช้ได้อย่างละ 1 ครั้ง</li>
+                    <li>**ด่านควิซ:** คลิกเลือกคำตอบที่ถูกต้อง</li>
+                    <li>**ด่านจับคู่:** คลิกค้างที่การ์ดฝั่งซ้าย แล้วลากไปวางบนคู่ที่ถูกต้องฝั่งขวา</li>
+                </ul>
+                <button id="close-modal-btn"
+                    class="w-full px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all">เข้าใจแล้ว</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explanation Modal -->
+    <div id="explanation-modal"
+        class="modal-overlay fixed inset-0 bg-black/70 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
+        <div class="modal-content transform scale-95 max-w-md w-full">
+            <div
+                class="rounded-2xl border border-slate-700/60 bg-slate-900 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
+                <h3 id="explanation-title" class="text-xl font-bold mb-3 text-emerald-400"></h3>
+                <p id="explanation-text" class="text-slate-300 mb-4"></p>
+                <button id="next-question-btn"
+                    class="w-full px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all">ข้อต่อไป</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // ---------- Game Data ----------
+        const QUIZ_QUESTIONS = [
+            { q: "หน่วยของแรงคืออะไร?", options: ["นิวตัน", "จูล", "วัตต์", "โวลต์"], answer: 0, explanation: "นิวตัน (Newton) คือหน่วยของแรงในระบบ SI ตั้งชื่อตามเซอร์ไอแซก นิวตัน" },
+            { q: "น้ำเดือดที่ระดับน้ำทะเลที่อุณหภูมิเท่าไร?", options: ["50°C", "80°C", "100°C", "120°C"], answer: 2, explanation: "ที่ความดันบรรยากาศปกติ (ระดับน้ำทะเล) น้ำจะเดือดที่อุณหภูมิ 100°C หรือ 212°F" },
+            { q: "หน่วยพื้นฐานที่เล็กที่สุดของธาตุคืออะไร?", options: ["โมเลกุล", "สารประกอบ", "อะตอม", "ไอออน"], answer: 2, explanation: "อะตอม (Atom) คือหน่วยพื้นฐานที่เล็กที่สุดของสสารที่ไม่สามารถแบ่งแยกได้อีกด้วยวิธีการทางเคมี" },
+            { q: "ข้อใดเป็นแหล่งพลังงานหมุนเวียน?", options: ["ถ่านหิน", "น้ำมันดิบ", "พลังงานแสงอาทิตย์", "ก๊าซธรรมชาติ"], answer: 2, explanation: "พลังงานแสงอาทิตย์เป็นพลังงานหมุนเวียนที่สะอาดและไม่มีวันหมดไป ต่างจากเชื้อเพลิงฟอสซิลที่มีอยู่อย่างจำกัด" },
+            { q: "เลนส์นูนมีคุณสมบัติเด่นคืออะไร?", options: ["รวมแสง", "กระจายแสง", "ดูดซับแสง", "สะท้อนแสง"], answer: 0, explanation: "เลนส์นูน (Convex Lens) มีคุณสมบัติในการรวมแสงไปยังจุดโฟกัสจุดเดียว ทำให้เกิดภาพจริงหัวกลับ" },
+            { q: "สารละลายที่มีค่า pH = 3 จัดเป็นอะไร?", options: ["กรด", "กลาง", "เบส", "เกลือ"], answer: 0, explanation: "ค่า pH ที่น้อยกว่า 7 แสดงถึงความเป็นกรด ยิ่งค่าน้อยความเป็นกรดก็ยิ่งสูง" },
+            { q: "กฎของโอห์มกล่าวว่าอย่างไร?", options: ["P = IV", "V = IR", "F = ma", "Q = mcΔT"], answer: 1, explanation: "กฎของโอห์ม (Ohm's Law) อธิบายความสัมพันธ์ระหว่างความต่างศักย์ (V), กระแสไฟฟ้า (I), และความต้านทาน (R) ในวงจรไฟฟ้า" },
+            { q: "การเผาผลาญกลูโคสในเซลล์ต้องใช้อะไรเป็นหลัก?", options: ["ไนโตรเจน", "คาร์บอนไดออกไซด์", "ออกซิเจน", "ฮีเลียม"], answer: 2, explanation: "กระบวนการหายใจระดับเซลล์ (Cellular Respiration) ใช้แก๊สออกซิเจนในการสลายกลูโคสเพื่อสร้างพลังงาน (ATP)" },
+            { q: "การพาความร้อน (convection) คืออะไร?", options: ["การถ่ายเทผ่านการแผ่รังสี", "การถ่ายเทผ่านการชนของอนุภาค", "การถ่ายเทโดยการเคลื่อนที่ของของไหล", "การถ่ายเทผ่านสุญยากาศเท่านั้น"], answer: 2, explanation: "การพาความร้อนคือการถ่ายเทความร้อนผ่านการเคลื่อนที่ของโมเลกุลในของเหลวหรือแก๊ส เช่น การเกิดลมบกลมทะเล" },
+            { q: "วงจรไฟฟ้าต่อแบบอนุกรมมีคุณสมบัติเด่นข้อใด?", options: ["แรงดันเท่ากันทุกจุด", "กระแสเท่ากันทุกจุด", "ความต้านทานรวมต่ำกว่าทุกตัว", "ไฟดับเฉพาะหลอดที่ขาด"], answer: 1, explanation: "ในวงจรอนุกรม กระแสไฟฟ้าจะไหลไปในทิศทางเดียวและมีค่าเท่ากันตลอดทั้งวงจร" },
+        ];
+
+        const MATCH_PAGES = [
+            [{ left: "H2O", right: "น้ำ" }, { left: "NaCl", right: "เกลือแกง" }, { left: "O2", right: "ออกซิเจน" }, { left: "CO2", right: "คาร์บอนไดออกไซด์" }, { left: "Fe", right: "เหล็ก" }],
+            [{ left: "Photosynthesis", right: "สังเคราะห์ด้วยแสง" }, { left: "Mitosis", right: "ไมโทซิส" }, { left: "Condensation", right: "การควบแน่น" }, { left: "Voltage", right: "ความต่างศักย์" }, { left: "Ohm", right: "หน่วยความต้านทาน" }],
+        ];
+
+        // ---------- DOM Elements ----------
+        // Scenes
+        const introScene = document.getElementById('intro-scene');
+        const quizScene = document.getElementById('quiz-scene');
+        const matchScene = document.getElementById('match-scene');
+        const summaryScene = document.getElementById('summary-scene');
+
+        // Header & Progress
+        const scoreDisplay = document.getElementById('score-display');
+        const totalProgressBar = document.getElementById('total-progress-bar');
+        const totalProgressText = document.getElementById('total-progress-text');
+
+        // Quiz Elements
+        const questionCounter = document.getElementById('question-counter');
+        const questionText = document.getElementById('question-text');
+        const timerDisplay = document.getElementById('timer-display');
+        const quizProgressBar = document.getElementById('quiz-progress-bar');
+        const quizOptionsContainer = document.getElementById('quiz-options-container');
+        const quiz5050Btn = document.getElementById('quiz-5050-btn');
+        const quizAddTimeBtn = document.getElementById('quiz-add-time-btn');
+        const quizSkipBtn = document.getElementById('quiz-skip-btn');
+
+        // Match Elements
+        const matchPageCounter = document.getElementById('match-page-counter');
+        const remainingPairsEl = document.getElementById('remaining-pairs');
+        const matchTimerDisplay = document.getElementById('match-timer-display');
+        const matchLeftColumn = document.getElementById('match-left-column');
+        const matchRightColumn = document.getElementById('match-right-column');
+        const matchRevealBtn = document.getElementById('match-reveal-btn');
+        const matchAddTimeBtn = document.getElementById('match-add-time-btn');
+        const matchSkipBtn = document.getElementById('match-skip-btn');
+
+        // Summary Elements
+        const finalScore = document.getElementById('final-score');
+        const finalRank = document.getElementById('final-rank');
+        const summaryQuiz50 = document.getElementById('summary-quiz50');
+        const summaryQuizTime = document.getElementById('summary-quizTime');
+        const summaryMatchReveal = document.getElementById('summary-matchReveal');
+        const summaryMatchTime = document.getElementById('summary-matchTime');
+        const homeBtn = document.getElementById('home-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Modal
+        const instructionModal = document.getElementById('instruction-modal');
+        const howToPlayBtn = document.getElementById('how-to-play-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        // Explanation Modal Elements
+        const explanationModal = document.getElementById('explanation-modal');
+        const explanationTitle = document.getElementById('explanation-title');
+        const explanationText = document.getElementById('explanation-text');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+
+
+        // ---------- Game State ----------
+        let scene = 'intro';
+        let score = 0;
+        let qIndex = 0;
+        let timeLeft = 20;
+        let timerRef = null;
+        let usedHints = {};
+        const totalItems = QUIZ_QUESTIONS.length + MATCH_PAGES.flat().length;
+
+        // Match specific state
+        let matchPageIndex = 0;
+        let matchPairs = [];
+        let rightOrder = [];
+        let matchedKeys = new Set();
+        let remainingPairs = 5;
+        let draggedKey = null;
+
+        // ---------- Utility Functions ----------
+        const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+        const shuffle = (arr) => {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        };
+        const getRank = (score) => {
+            if (score >= 160) return "S";
+            if (score >= 120) return "A";
+            if (score >= 80) return "B";
+            return "C";
+        };
+
+        // ---------- Audio Engine ----------
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.error("Web Audio API is not supported in this browser");
+                }
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
+
+            switch (type) {
+                case 'correct':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                    break;
+                case 'incorrect':
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+                    break;
+                case 'click':
+                default:
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    break;
+            }
+
+            oscillator.start(audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.2);
+            oscillator.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // ---------- Scene Management ----------
+        function switchScene(newScene) {
+            scene = newScene;
+            introScene.classList.toggle('hidden', scene !== 'intro');
+            quizScene.classList.toggle('hidden', scene !== 'quiz');
+            matchScene.classList.toggle('hidden', scene !== 'match');
+            summaryScene.classList.toggle('hidden', scene !== 'summary');
+
+            stopTimer();
+
+            if (scene === 'quiz') setupQuiz();
+            if (scene === 'match') setupMatch();
+            if (scene === 'summary') render();
+        }
+
+        // ---------- Game Flow ----------
+        function startGame() {
+            score = 0;
+            qIndex = 0;
+            matchPageIndex = 0;
+            usedHints = { quiz50: false, quizTime: false, matchReveal: false, matchTime: false };
+            switchScene('quiz');
+        }
+
+        // --- Timer ---
+        function startTimer() {
+            stopTimer();
+            timeLeft = 20;
+            timerRef = setInterval(() => {
+                timeLeft--;
+                render();
+                if (timeLeft <= 0) {
+                    if (scene === 'quiz') selectAnswer(null); // Timeout is wrong answer
+                    if (scene === 'match') handleMatchTimeout();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerRef) clearInterval(timerRef);
+            timerRef = null;
+        }
+
+        // --- Quiz Logic ---
+        function setupQuiz() {
+            renderQuizContent();
+            startTimer();
+        }
+
+        function selectAnswer(i) {
+            stopTimer();
+            playSound('click');
+            const question = QUIZ_QUESTIONS[qIndex];
+            const isCorrect = i === question.answer;
+
+            // Give visual feedback
+            const optionButtons = quizOptionsContainer.querySelectorAll('button');
+            optionButtons.forEach((btn, index) => {
+                btn.disabled = true;
+                if (index === question.answer) {
+                    btn.classList.add('bg-emerald-500/50', 'border-emerald-500');
+                }
+                if (index === i && !isCorrect) {
+                    btn.classList.add('bg-rose-500/50', 'border-rose-500');
+                }
+            });
+
+            if (isCorrect) {
+                playSound('correct');
+                const bonus = Math.floor(timeLeft / 2); // Max 10 bonus points
+                score += (5 + bonus);
+                showExplanation("ตอบถูก!", question.explanation);
+            } else {
+                playSound('incorrect');
+                showExplanation("น่าเสียดาย คำตอบที่ถูกคือ...", question.explanation);
+            }
+        }
+
+        function goNextQuiz() {
+            hideExplanation();
+            if (qIndex + 1 >= QUIZ_QUESTIONS.length) {
+                switchScene('match');
+            } else {
+                qIndex++;
+                render();
+                startTimer();
+            }
+        }
+
+        function useQuiz5050() {
+            if (usedHints.quiz50) return;
+            playSound('click');
+            usedHints.quiz50 = true;
+            renderQuizContent(); // Re-render options
+        }
+
+        function useQuizAddTime() {
+            if (usedHints.quizTime) return;
+            playSound('click');
+            usedHints.quizTime = true;
+            timeLeft += 10;
+            render();
+        }
+
+        // --- Match Logic ---
+        function setupMatch() {
+            const page = MATCH_PAGES[matchPageIndex];
+            matchPairs = page.map((p, idx) => ({ ...p, key: `${matchPageIndex}-${idx}` }));
+            rightOrder = shuffle([...matchPairs.map(p => p.key)]);
+            matchedKeys = new Set();
+            draggedKey = null;
+            remainingPairs = 5;
+            renderMatchContent();
+            startTimer();
+        }
+
+        function handleMatchTimeout() {
+            playSound('incorrect');
+            const available = matchPairs.map(p => p.key).filter(k => !matchedKeys.has(k));
+            if (available.length === 0) return;
+            const removeOne = available[Math.floor(Math.random() * available.length)];
+
+            matchedKeys.add(removeOne);
+            remainingPairs--;
+
+            if (matchedKeys.size >= 5) {
+                stopTimer();
+                if (scene === 'match' && matchPageIndex === 0) {
+                    matchPageIndex = 1;
+                    setupMatch();
+                } else {
+                    switchScene('summary');
+                }
+            } else {
+                startTimer();
+            }
+            render();
+        }
+
+        function useMatchReveal() {
+            if (usedHints.matchReveal) return;
+            playSound('click');
+            usedHints.matchReveal = true;
+
+            const available = matchPairs.map(p => p.key).filter(k => !matchedKeys.has(k));
+            if (available.length === 0) return;
+
+            const pick = available[Math.floor(Math.random() * available.length)];
+            score += 5; // Base score for reveal
+
+            // Trigger a correct match for the revealed pair
+            handleCorrectMatch(pick);
+        }
+
+        function useMatchAddTime() {
+            if (usedHints.matchTime) return;
+            playSound('click');
+            usedHints.matchTime = true;
+            timeLeft += 10;
+            render();
+        }
+
+        // --- Drag and Drop Handlers ---
+        function handleDragStart(e) {
+            draggedKey = e.target.dataset.key;
+            e.dataTransfer.effectAllowed = 'move';
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const target = e.currentTarget;
+            if (target.dataset.key !== draggedKey) {
+                target.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropTarget = e.currentTarget;
+            dropTarget.classList.remove('drag-over');
+            const droppedOnKey = dropTarget.dataset.key;
+
+            if (!draggedKey || matchedKeys.has(droppedOnKey)) return;
+
+            if (draggedKey === droppedOnKey) {
+                const bonus = Math.floor(timeLeft / 2);
+                score += (5 + bonus);
+                handleCorrectMatch(droppedOnKey);
+            } else {
+                playSound('incorrect');
+                dropTarget.classList.add('shake', 'bg-rose-500/50');
+                setTimeout(() => dropTarget.classList.remove('shake', 'bg-rose-500/50'), 500);
+            }
+            draggedKey = null;
+        }
+
+        function handleCorrectMatch(key) {
+            playSound('correct');
+            matchedKeys.add(key);
+            remainingPairs--;
+
+            const leftItem = matchLeftColumn.querySelector(`[data-key="${key}"]`);
+            const rightItem = matchRightColumn.querySelector(`[data-key="${key}"]`);
+
+            if (leftItem) leftItem.classList.add('fade-out');
+            if (rightItem) rightItem.classList.add('fade-out');
+
+            setTimeout(() => {
+                if (leftItem) leftItem.classList.add('matched');
+                if (rightItem) rightItem.classList.add('matched');
+            }, 500);
+
+            if (matchedKeys.size >= 5) {
+                stopTimer();
+                setTimeout(() => {
+                    if (scene === 'match' && matchPageIndex === 0) {
+                        matchPageIndex = 1;
+                        setupMatch();
+                    } else {
+                        switchScene('summary');
+                    }
+                }, 500); // Wait for fade out
+            } else {
+                startTimer();
+            }
+            render();
+        }
+
+        // ---------- Rendering ----------
+        function render() {
+            updateProgress();
+            updateTimerDisplay();
+
+            if (scene === 'quiz') renderQuizContent();
+            if (scene === 'match') {
+                remainingPairsEl.textContent = remainingPairs;
+                matchPageCounter.textContent = `จับคู่ — หน้า ${matchPageIndex + 1} / 2`;
+                matchRevealBtn.disabled = usedHints.matchReveal;
+                matchAddTimeBtn.disabled = usedHints.matchTime;
+            }
+            if (scene === 'summary') renderSummaryContent();
+        }
+
+        function renderQuizContent() {
+            const question = QUIZ_QUESTIONS[qIndex];
+            questionCounter.textContent = `ข้อ ${qIndex + 1} / ${QUIZ_QUESTIONS.length}`;
+            questionText.textContent = question.q;
+            quizOptionsContainer.innerHTML = '';
+
+            const visibleOptions = usedHints.quiz50
+                ? (() => {
+                    const correct = question.answer;
+                    const wrongs = question.options.map((_, i) => i).filter(i => i !== correct);
+                    const keptWrong = wrongs[Math.floor(Math.random() * wrongs.length)];
+                    return [correct, keptWrong].sort((a, b) => a - b);
+                })()
+                : question.options.map((_, i) => i);
+
+            visibleOptions.forEach(idx => {
+                const option = question.options[idx];
+                const button = document.createElement('button');
+                button.className = "text-left rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-700/60 px-4 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400";
+                button.innerHTML = `<span class="mr-2 inline-block w-6 h-6 text-center rounded bg-slate-700/70 text-slate-200">${String.fromCharCode(65 + idx)}</span> ${option}`;
+                button.onclick = () => selectAnswer(idx);
+                quizOptionsContainer.appendChild(button);
+            });
+
+            quiz5050Btn.disabled = usedHints.quiz50;
+            quizAddTimeBtn.disabled = usedHints.quizTime;
+            if (usedHints.quiz50) quiz5050Btn.textContent = '🔎 50:50 (ใช้แล้ว)';
+            if (usedHints.quizTime) quizAddTimeBtn.textContent = '⏱️ +10s (ใช้แล้ว)';
+        }
+
+        function renderMatchContent() {
+            matchLeftColumn.innerHTML = '';
+            matchRightColumn.innerHTML = '';
+
+            // Left column (fixed order)
+            matchPairs.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'draggable-item text-left px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/60 transition-all';
+                item.textContent = p.left;
+                item.dataset.key = p.key;
+                item.draggable = true;
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                if (matchedKeys.has(p.key)) item.classList.add('matched');
+                matchLeftColumn.appendChild(item);
+            });
+
+            // Right column (shuffled order)
+            rightOrder.forEach(key => {
+                const p = matchPairs.find(pair => pair.key === key);
+                const item = document.createElement('div');
+                item.className = 'drop-target text-left px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/60 transition-all';
+                item.textContent = p.right;
+                item.dataset.key = p.key;
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('dragleave', handleDragLeave);
+                item.addEventListener('drop', handleDrop);
+                if (matchedKeys.has(p.key)) item.classList.add('matched');
+                matchRightColumn.appendChild(item);
+            });
+        }
+
+        function renderSummaryContent() {
+            stopTimer();
+            finalScore.textContent = `${score} / 200`;
+            finalRank.textContent = getRank(score);
+            summaryQuiz50.textContent = usedHints.quiz50 ? "✅" : "—";
+            summaryQuizTime.textContent = usedHints.quizTime ? "✅" : "—";
+            summaryMatchReveal.textContent = usedHints.matchReveal ? "✅" : "—";
+            summaryMatchTime.textContent = usedHints.matchTime ? "✅" : "—";
+        }
+
+        function updateTimerDisplay() {
+            const targetTimer = scene === 'quiz' ? timerDisplay : matchTimerDisplay;
+            if (targetTimer) {
+                targetTimer.textContent = `${timeLeft}s`;
+                targetTimer.classList.toggle('text-rose-400', timeLeft <= 5);
+            }
+        }
+
+        function updateProgress() {
+            scoreDisplay.textContent = `คะแนน: ${score}`;
+            const quizProgress = (qIndex / QUIZ_QUESTIONS.length) * 100;
+            quizProgressBar.style.width = `${quizProgress}%`;
+
+            const quizDone = scene === 'match' || scene === 'summary' ? QUIZ_QUESTIONS.length : qIndex;
+            const matchDone = (matchPageIndex * 5) + (5 - remainingPairs);
+            const totalProgress = Math.round(((quizDone + matchDone) / totalItems) * 100);
+            totalProgressBar.style.width = `${totalProgress}%`;
+            totalProgressText.textContent = `${totalProgress}% เสร็จแล้ว`;
+        }
+
+        function showModal() {
+            playSound('click');
+            instructionModal.classList.remove('opacity-0', 'pointer-events-none');
+            instructionModal.querySelector('.modal-content').classList.remove('scale-95');
+        }
+        function hideModal() {
+            playSound('click');
+            instructionModal.classList.add('opacity-0', 'pointer-events-none');
+            instructionModal.querySelector('.modal-content').classList.add('scale-95');
+        }
+
+        function showExplanation(title, text) {
+            explanationTitle.textContent = title;
+            explanationText.textContent = text;
+            explanationModal.classList.remove('opacity-0', 'pointer-events-none');
+            explanationModal.querySelector('.modal-content').classList.remove('scale-95');
+        }
+
+        function hideExplanation() {
+            explanationModal.classList.add('opacity-0', 'pointer-events-none');
+            explanationModal.querySelector('.modal-content').classList.add('scale-95');
+        }
+
+        // ---------- Event Listeners ----------
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // On first user interaction, initialize audio context
+            document.body.addEventListener('click', initAudio, { once: true });
+
+            const startGameBtn = document.getElementById('start-game-btn');
+            startGameBtn.addEventListener('click', () => { playSound('click'); startGame(); });
+            howToPlayBtn.addEventListener('click', showModal);
+            closeModalBtn.addEventListener('click', hideModal);
+            nextQuestionBtn.addEventListener('click', () => { playSound('click'); goNextQuiz(); });
+
+            quiz5050Btn.addEventListener('click', useQuiz5050);
+            quizAddTimeBtn.addEventListener('click', useQuizAddTime);
+            quizSkipBtn.addEventListener('click', () => { playSound('click'); selectAnswer(null); });
+
+            matchRevealBtn.addEventListener('click', useMatchReveal);
+            matchAddTimeBtn.addEventListener('click', useMatchAddTime);
+            matchSkipBtn.addEventListener('click', () => { playSound('incorrect'); handleMatchTimeout(); });
+
+            homeBtn.addEventListener('click', () => {
+                playSound('click');
+                stopTimer();
+                switchScene('intro');
+                render();
+            });
+            restartBtn.addEventListener('click', () => { playSound('click'); startGame(); });
+
+            render(); // Initial render
+        });
+    </script>
+</body>
+
+</html>
