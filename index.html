@@ -60,14 +60,14 @@
         .dragging {
             opacity: 0.5;
             cursor: grabbing;
-            background-color: #0f172a;
-            /* slate-900 */
+            background-color: #f1f5f9;
+            /* slate-100 */
         }
 
         .drop-target.drag-over {
             border-color: #34d399;
             /* emerald-400 */
-            background-color: rgba(16, 185, 129, 0.2);
+            background-color: rgba(16, 185, 129, 0.1);
         }
 
         .fade-out {
@@ -93,56 +93,54 @@
     </style>
 </head>
 
-<body class="bg-slate-900">
-    <div
-        class="min-h-screen w-full bg-[radial-gradient(1200px_600px_at_70%_-10%,#0b1220_0%,#0a0f1a_60%)] text-slate-100 selection:bg-emerald-400/30">
+<body class="bg-gray-100">
+    <div class="min-h-screen w-full text-slate-800 selection:bg-cyan-400/30">
         <div class="mx-auto max-w-4xl px-4 py-8">
             <!-- Header -->
             <header class="mb-6 flex items-center justify-between">
                 <div>
                     <h1
-                        class="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                        class="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
                         เกมวิทยาศาสตร์ — สายอาชีพ
                     </h1>
-                    <p class="text-slate-400 text-sm">ความรู้วิทยาศาสตร์ระดับ ปวส | 20 วิ ต่อข้อ | คะแนนเต็ม 200</p>
+                    <p class="text-slate-500 text-sm">ทดสอบความรู้ ม.ปลาย | จับเวลา 10 วินาที</p>
                 </div>
                 <div class="hidden sm:flex items-center gap-2">
                     <div
-                        class="flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 text-sm">
+                        class="flex items-center gap-2 rounded-full border border-gray-200/80 bg-white/60 backdrop-blur-sm px-3 py-1 text-sm">
                         <span>🏆</span>
-                        <span id="score-display" class="text-slate-200">คะแนน: 0</span>
-                    </div>
-                    <div
-                        class="flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 text-sm">
-                        <span>📈</span>
-                        <span class="text-slate-200">ความคืบหน้า</span>
+                        <span id="score-display" class="text-slate-700">คะแนน: 0</span>
                     </div>
                 </div>
             </header>
-
-            <!-- Global Progress -->
-            <div class="mb-8">
-                <div class="w-full h-2 bg-slate-700/70 rounded-full overflow-hidden">
-                    <div id="total-progress-bar"
-                        class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all" style="width: 0%">
-                    </div>
-                </div>
-                <div id="total-progress-text" class="mt-2 text-right text-xs text-slate-400">0% เสร็จแล้ว</div>
-            </div>
 
             <!-- Scenes Container -->
             <main>
                 <!-- Intro Scene -->
                 <div id="intro-scene">
                     <div
-                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40 text-center py-12">
-                        <h2 class="text-xl sm:text-2xl font-bold mb-2">พร้อมหรือยัง?</h2>
-                        <p class="text-slate-300 mb-6">เกมมี 2 ด่าน: ตอบคำถาม 10 ข้อ และจับคู่ 10 คู่ (แบ่ง 2 หน้า)</p>
-                        <div class="flex items-center justify-center gap-3">
-                            <button id="start-game-btn"
-                                class="px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all shadow-lg shadow-emerald-900/30">เริ่มเกม</button>
+                        class="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur p-6 shadow-lg shadow-gray-200/60 text-center py-12">
+                        <h2 class="text-xl sm:text-2xl font-bold mb-2 text-slate-900">เลือกโหมดเกม</h2>
+                        <p class="text-slate-600 mb-6">เลือกทดสอบความรู้ของคุณในโหมดเกมที่แตกต่างกัน</p>
+                        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                            <!-- Quiz Card -->
+                            <div id="start-quiz-btn"
+                                class="group rounded-2xl border border-gray-200 bg-white/50 p-6 text-center hover:border-cyan-400/80 hover:bg-white transition-all cursor-pointer shadow-md hover:shadow-xl">
+                                <div class="text-5xl mb-3">🚀</div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-1">เกมตอบคำถาม</h3>
+                                <p class="text-slate-500 text-sm">เลือกคำตอบที่ถูกต้องจาก 4 ตัวเลือกภายใน 10 วินาที</p>
+                            </div>
+                            <!-- Match Card -->
+                            <div id="start-match-btn"
+                                class="group rounded-2xl border border-gray-200 bg-white/50 p-6 text-center hover:border-fuchsia-400/80 hover:bg-white transition-all cursor-pointer shadow-md hover:shadow-xl">
+                                <div class="text-5xl mb-3">🧩</div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-1">เกมจับคู่</h3>
+                                <p class="text-slate-500 text-sm">ลากการ์ดฝั่งซ้ายไปวางทับคู่ที่ถูกต้องใน 10 วินาที</p>
+                            </div>
+                        </div>
+                        <div class="mt-8">
                             <button id="how-to-play-btn"
-                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">วิธีเล่น</button>
+                                class="px-4 py-2 rounded-lg border border-gray-300 text-slate-700 hover:bg-gray-200/60 transition-colors">วิธีเล่น</button>
                         </div>
                     </div>
                 </div>
@@ -150,38 +148,31 @@
                 <!-- Quiz Scene -->
                 <div id="quiz-scene" class="hidden">
                     <div
-                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
+                        class="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur p-6 shadow-lg shadow-gray-200/60">
                         <div class="flex items-start justify-between gap-4">
                             <div>
-                                <div id="question-counter" class="text-sm text-slate-400 mb-1">ข้อ 1 / 10</div>
-                                <h3 id="question-text" class="text-lg sm:text-xl font-semibold mb-4">...</h3>
+                                <div id="question-counter" class="text-sm text-slate-500 mb-1">ข้อ 1 / 10</div>
+                                <h3 id="question-text" class="text-lg sm:text-xl font-semibold mb-4 text-slate-900">...
+                                </h3>
                             </div>
                             <div class="text-right">
-                                <div class="text-xs text-slate-400">เวลาที่เหลือ</div>
-                                <div id="timer-display" class="text-2xl font-extrabold">20s</div>
+                                <div class="text-xs text-slate-500">เวลาที่เหลือ</div>
+                                <div id="timer-display" class="text-2xl font-extrabold text-slate-800">10s</div>
                             </div>
                         </div>
                         <div class="mb-4">
-                            <div class="w-full h-1 bg-slate-700/70 rounded-full overflow-hidden">
+                            <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
                                 <div id="quiz-progress-bar"
                                     class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all"
-                                    style="width: 0%;"></div>
+                                    style="width: 100%;"></div>
                             </div>
                         </div>
                         <div id="quiz-options-container" class="grid gap-3">
                             <!-- Options will be generated here -->
                         </div>
-                        <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-2">
-                                <button id="quiz-5050-btn"
-                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">🔎
-                                    50:50</button>
-                                <button id="quiz-add-time-btn"
-                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">⏱️
-                                    +10s</button>
-                            </div>
+                        <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
                             <button id="quiz-skip-btn"
-                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">ข้ามข้อ
+                                class="px-4 py-2 rounded-lg border border-gray-300 text-slate-700 hover:bg-gray-200/60 transition-colors">ข้ามข้อ
                                 (นับผิด)</button>
                         </div>
                     </div>
@@ -190,17 +181,18 @@
                 <!-- Match Scene -->
                 <div id="match-scene" class="hidden">
                     <div
-                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
+                        class="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur p-6 shadow-lg shadow-gray-200/60">
                         <div class="mb-4 flex items-start justify-between">
                             <div>
-                                <div id="match-page-counter" class="text-sm text-slate-400 mb-1">จับคู่ — หน้า 1 / 2
+                                <div id="match-page-counter" class="text-sm text-slate-500 mb-1">จับคู่ — หน้า 1 / 2
                                 </div>
-                                <h3 class="text-lg sm:text-xl font-semibold">ลากการ์ดซ้ายไปวางทับคู่ที่ถูกต้อง (เหลือ
-                                    <span id="remaining-pairs">5</span> คู่)</h3>
+                                <h3 class="text-lg sm:text-xl font-semibold text-slate-900">
+                                    ลากการ์ดซ้ายไปวางทับคู่ที่ถูกต้อง (เหลือ <span id="remaining-pairs">5</span> คู่)
+                                </h3>
                             </div>
                             <div class="text-right">
-                                <div class="text-xs text-slate-400">เวลาที่เหลือ</div>
-                                <div id="match-timer-display" class="text-2xl font-extrabold">20s</div>
+                                <div class="text-xs text-slate-500">เวลาที่เหลือ</div>
+                                <div id="match-timer-display" class="text-2xl font-extrabold text-slate-800">10s</div>
                             </div>
                         </div>
                         <div class="grid sm:grid-cols-2 gap-4">
@@ -213,17 +205,9 @@
                                 <!-- Droppable targets will be generated here -->
                             </div>
                         </div>
-                        <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-2">
-                                <button id="match-reveal-btn"
-                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">💡
-                                    โชว์คู่ที่ถูก 1 คู่</button>
-                                <button id="match-add-time-btn"
-                                    class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">⏱️
-                                    +10s</button>
-                            </div>
+                        <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
                             <button id="match-skip-btn"
-                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">ตัดเวลาคู่นี้
+                                class="px-4 py-2 rounded-lg border border-gray-300 text-slate-700 hover:bg-gray-200/60 transition-colors">ข้ามคู่นี้
                                 (นับผิด)</button>
                         </div>
                     </div>
@@ -232,29 +216,19 @@
                 <!-- Summary Scene -->
                 <div id="summary-scene" class="hidden">
                     <div
-                        class="rounded-2xl border border-slate-700/60 bg-slate-900/60 backdrop-blur p-6 shadow-xl shadow-slate-900/40 text-center py-10">
-                        <div class="mb-4 text-sm text-slate-400">จบเกมแล้ว!</div>
+                        class="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur p-6 shadow-lg shadow-gray-200/60 text-center py-10">
+                        <div class="mb-4 text-sm text-slate-500">จบเกมแล้ว!</div>
                         <div id="final-score"
-                            class="text-5xl font-black bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-                            0 / 200
+                            class="text-5xl font-black bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
+                            0 / 100
                         </div>
-                        <div class="mt-2 text-slate-300">แรงค์ของคุณ: <span id="final-rank"
-                                class="text-2xl font-extrabold text-emerald-300">C</span></div>
-                        <div class="mx-auto mt-6 grid max-w-md grid-cols-2 gap-2 text-left text-sm">
-                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">ใช้ 50:50: <span
-                                    id="summary-quiz50"></span></div>
-                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">ใช้ +10s (ควิซ): <span
-                                    id="summary-quizTime"></span></div>
-                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">โชว์คู่ที่ถูก: <span
-                                    id="summary-matchReveal"></span></div>
-                            <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-3">ใช้ +10s (จับคู่): <span
-                                    id="summary-matchTime"></span></div>
-                        </div>
+                        <div class="mt-2 text-slate-600">แรงค์ของคุณ: <span id="final-rank"
+                                class="text-2xl font-extrabold text-emerald-500">C</span></div>
                         <div class="mt-8 flex items-center justify-center gap-3">
                             <button id="home-btn"
-                                class="px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all shadow-lg shadow-emerald-900/30">กลับหน้าแรก</button>
+                                class="px-4 py-2 rounded-lg border border-gray-300 text-slate-700 hover:bg-gray-200/60 transition-colors">กลับหน้าหลัก</button>
                             <button id="restart-btn"
-                                class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800/60 transition-colors">เล่นอีกครั้ง</button>
+                                class="px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all shadow-lg shadow-emerald-500/30">เล่นอีกครั้ง</button>
                         </div>
                     </div>
                 </div>
@@ -269,19 +243,37 @@
 
     <!-- Instruction Modal -->
     <div id="instruction-modal"
-        class="modal-overlay fixed inset-0 bg-black/70 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
+        class="modal-overlay fixed inset-0 bg-black/50 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
         <div class="modal-content transform scale-95 max-w-md w-full">
-            <div
-                class="rounded-2xl border border-slate-700/60 bg-slate-900 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
-                <h3 class="text-xl font-bold mb-3 text-emerald-400">วิธีเล่น</h3>
-                <ul class="list-disc list-inside text-slate-300 space-y-2 mb-6">
-                    <li>เกมมี 2 ด่าน: ควิซ 10 ข้อ และจับคู่ 10 คู่</li>
-                    <li>แต่ละข้อ/คู่ มีเวลา 20 วินาทีในการตอบ</li>
-                    <li>ยิ่งตอบเร็วยิ่งได้คะแนนโบนัส! (คะแนนเต็ม 200)</li>
-                    <li>มีตัวช่วย 2 อย่างในแต่ละด่าน แต่จะใช้ได้อย่างละ 1 ครั้ง</li>
-                    <li>**ด่านควิซ:** คลิกเลือกคำตอบที่ถูกต้อง</li>
-                    <li>**ด่านจับคู่:** คลิกค้างที่การ์ดฝั่งซ้าย แล้วลากไปวางบนคู่ที่ถูกต้องฝั่งขวา</li>
-                </ul>
+            <div class="rounded-2xl border border-gray-200 bg-white backdrop-blur p-6 shadow-xl">
+                <h3 class="text-xl font-bold mb-4 text-emerald-500">วิธีเล่น</h3>
+
+                <div class="space-y-4 text-slate-600 mb-6">
+                    <div>
+                        <strong class="text-cyan-500">🚀 เกมตอบคำถาม (Quiz Game)</strong>
+                        <ul class="list-disc list-inside mt-1 pl-2 text-sm space-y-1">
+                            <li>คลิกเลือกคำตอบที่ถูกต้องจาก 4 ตัวเลือก</li>
+                            <li>ตอบถูกได้รับ 10 คะแนน</li>
+                            <li>แต่ละข้อมีเวลา 10 วินาที</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong class="text-fuchsia-500">🧩 เกมจับคู่ (Match Game)</strong>
+                        <ul class="list-disc list-inside mt-1 pl-2 text-sm space-y-1">
+                            <li>คลิกค้างที่การ์ดฝั่งซ้าย แล้วลากไปวางบนคู่ที่ถูกต้องฝั่งขวา</li>
+                            <li>จับคู่ถูกได้รับ 10 คะแนน</li>
+                            <li>แต่ละรอบ (5 คู่) มีเวลา 10 วินาทีต่อ 1 คู่ที่ยังไม่ถูกจับ</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong class="text-slate-700">กฎทั่วไป</strong>
+                        <ul class="list-disc list-inside mt-1 pl-2 text-sm space-y-1">
+                            <li>การข้ามข้อ, ปล่อยให้เวลาหมด, หรือจับคู่ผิด จะถูกนับเป็นข้อที่ผิด (ไม่ได้คะแนน)</li>
+                            <li>คะแนนเต็มทั้งหมด 100 คะแนน</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <button id="close-modal-btn"
                     class="w-full px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all">เข้าใจแล้ว</button>
             </div>
@@ -290,12 +282,11 @@
 
     <!-- Explanation Modal -->
     <div id="explanation-modal"
-        class="modal-overlay fixed inset-0 bg-black/70 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
+        class="modal-overlay fixed inset-0 bg-black/50 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
         <div class="modal-content transform scale-95 max-w-md w-full">
-            <div
-                class="rounded-2xl border border-slate-700/60 bg-slate-900 backdrop-blur p-6 shadow-xl shadow-slate-900/40">
-                <h3 id="explanation-title" class="text-xl font-bold mb-3 text-emerald-400"></h3>
-                <p id="explanation-text" class="text-slate-300 mb-4"></p>
+            <div class="rounded-2xl border border-gray-200 bg-white backdrop-blur p-6 shadow-xl">
+                <h3 id="explanation-title" class="text-xl font-bold mb-3 text-emerald-500"></h3>
+                <p id="explanation-text" class="text-slate-600 mb-4"></p>
                 <button id="next-question-btn"
                     class="w-full px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-900 hover:from-cyan-400 hover:to-emerald-400 transition-all">ข้อต่อไป</button>
             </div>
@@ -332,8 +323,6 @@
 
         // Header & Progress
         const scoreDisplay = document.getElementById('score-display');
-        const totalProgressBar = document.getElementById('total-progress-bar');
-        const totalProgressText = document.getElementById('total-progress-text');
 
         // Quiz Elements
         const questionCounter = document.getElementById('question-counter');
@@ -341,8 +330,6 @@
         const timerDisplay = document.getElementById('timer-display');
         const quizProgressBar = document.getElementById('quiz-progress-bar');
         const quizOptionsContainer = document.getElementById('quiz-options-container');
-        const quiz5050Btn = document.getElementById('quiz-5050-btn');
-        const quizAddTimeBtn = document.getElementById('quiz-add-time-btn');
         const quizSkipBtn = document.getElementById('quiz-skip-btn');
 
         // Match Elements
@@ -351,17 +338,11 @@
         const matchTimerDisplay = document.getElementById('match-timer-display');
         const matchLeftColumn = document.getElementById('match-left-column');
         const matchRightColumn = document.getElementById('match-right-column');
-        const matchRevealBtn = document.getElementById('match-reveal-btn');
-        const matchAddTimeBtn = document.getElementById('match-add-time-btn');
         const matchSkipBtn = document.getElementById('match-skip-btn');
 
         // Summary Elements
         const finalScore = document.getElementById('final-score');
         const finalRank = document.getElementById('final-rank');
-        const summaryQuiz50 = document.getElementById('summary-quiz50');
-        const summaryQuizTime = document.getElementById('summary-quizTime');
-        const summaryMatchReveal = document.getElementById('summary-matchReveal');
-        const summaryMatchTime = document.getElementById('summary-matchTime');
         const homeBtn = document.getElementById('home-btn');
         const restartBtn = document.getElementById('restart-btn');
 
@@ -381,10 +362,9 @@
         let scene = 'intro';
         let score = 0;
         let qIndex = 0;
-        let timeLeft = 20;
+        let timeLeft = 10;
         let timerRef = null;
-        let usedHints = {};
-        const totalItems = QUIZ_QUESTIONS.length + MATCH_PAGES.flat().length;
+        let currentGame = null;
 
         // Match specific state
         let matchPageIndex = 0;
@@ -405,9 +385,9 @@
             return a;
         };
         const getRank = (score) => {
-            if (score >= 160) return "S";
-            if (score >= 120) return "A";
-            if (score >= 80) return "B";
+            if (score >= 90) return "S";
+            if (score >= 75) return "A";
+            if (score >= 60) return "B";
             return "C";
         };
 
@@ -471,18 +451,24 @@
         }
 
         // ---------- Game Flow ----------
-        function startGame() {
+        function startQuizGame() {
+            currentGame = 'quiz';
             score = 0;
             qIndex = 0;
-            matchPageIndex = 0;
-            usedHints = { quiz50: false, quizTime: false, matchReveal: false, matchTime: false };
             switchScene('quiz');
+        }
+
+        function startMatchGame() {
+            currentGame = 'match';
+            score = 0;
+            matchPageIndex = 0;
+            switchScene('match');
         }
 
         // --- Timer ---
         function startTimer() {
             stopTimer();
-            timeLeft = 20;
+            timeLeft = 10;
             timerRef = setInterval(() => {
                 timeLeft--;
                 render();
@@ -524,8 +510,7 @@
 
             if (isCorrect) {
                 playSound('correct');
-                const bonus = Math.floor(timeLeft / 2); // Max 10 bonus points
-                score += (5 + bonus);
+                score += 10;
                 showExplanation("ตอบถูก!", question.explanation);
             } else {
                 playSound('incorrect');
@@ -536,27 +521,11 @@
         function goNextQuiz() {
             hideExplanation();
             if (qIndex + 1 >= QUIZ_QUESTIONS.length) {
-                switchScene('match');
+                switchScene('summary');
             } else {
                 qIndex++;
-                render();
-                startTimer();
+                setupQuiz();
             }
-        }
-
-        function useQuiz5050() {
-            if (usedHints.quiz50) return;
-            playSound('click');
-            usedHints.quiz50 = true;
-            renderQuizContent(); // Re-render options
-        }
-
-        function useQuizAddTime() {
-            if (usedHints.quizTime) return;
-            playSound('click');
-            usedHints.quizTime = true;
-            timeLeft += 10;
-            render();
         }
 
         // --- Match Logic ---
@@ -594,29 +563,6 @@
             render();
         }
 
-        function useMatchReveal() {
-            if (usedHints.matchReveal) return;
-            playSound('click');
-            usedHints.matchReveal = true;
-
-            const available = matchPairs.map(p => p.key).filter(k => !matchedKeys.has(k));
-            if (available.length === 0) return;
-
-            const pick = available[Math.floor(Math.random() * available.length)];
-            score += 5; // Base score for reveal
-
-            // Trigger a correct match for the revealed pair
-            handleCorrectMatch(pick);
-        }
-
-        function useMatchAddTime() {
-            if (usedHints.matchTime) return;
-            playSound('click');
-            usedHints.matchTime = true;
-            timeLeft += 10;
-            render();
-        }
-
         // --- Drag and Drop Handlers ---
         function handleDragStart(e) {
             draggedKey = e.target.dataset.key;
@@ -649,8 +595,7 @@
             if (!draggedKey || matchedKeys.has(droppedOnKey)) return;
 
             if (draggedKey === droppedOnKey) {
-                const bonus = Math.floor(timeLeft / 2);
-                score += (5 + bonus);
+                score += 10;
                 handleCorrectMatch(droppedOnKey);
             } else {
                 playSound('incorrect');
@@ -694,17 +639,26 @@
 
         // ---------- Rendering ----------
         function render() {
-            updateProgress();
+            scoreDisplay.textContent = `คะแนน: ${score}`;
             updateTimerDisplay();
 
-            if (scene === 'quiz') renderQuizContent();
             if (scene === 'match') {
                 remainingPairsEl.textContent = remainingPairs;
                 matchPageCounter.textContent = `จับคู่ — หน้า ${matchPageIndex + 1} / 2`;
-                matchRevealBtn.disabled = usedHints.matchReveal;
-                matchAddTimeBtn.disabled = usedHints.matchTime;
             }
             if (scene === 'summary') renderSummaryContent();
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = scene === 'quiz' ? timerDisplay : matchTimerDisplay;
+            if (timerEl) {
+                timerEl.textContent = `${timeLeft}s`;
+                timerEl.style.color = timeLeft <= 3 ? '#f43f5e' : '#1e293b'; // Rose-500 or Slate-800
+            }
+            if (scene === 'quiz') {
+                const quizProgressPercent = clamp((timeLeft / 10) * 100, 0, 100);
+                quizProgressBar.style.width = `${quizProgressPercent}%`;
+            }
         }
 
         function renderQuizContent() {
@@ -713,99 +667,63 @@
             questionText.textContent = question.q;
             quizOptionsContainer.innerHTML = '';
 
-            const visibleOptions = usedHints.quiz50
-                ? (() => {
-                    const correct = question.answer;
-                    const wrongs = question.options.map((_, i) => i).filter(i => i !== correct);
-                    const keptWrong = wrongs[Math.floor(Math.random() * wrongs.length)];
-                    return [correct, keptWrong].sort((a, b) => a - b);
-                })()
-                : question.options.map((_, i) => i);
-
-            visibleOptions.forEach(idx => {
-                const option = question.options[idx];
+            question.options.forEach((option, i) => {
                 const button = document.createElement('button');
-                button.className = "text-left rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-700/60 px-4 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400";
-                button.innerHTML = `<span class="mr-2 inline-block w-6 h-6 text-center rounded bg-slate-700/70 text-slate-200">${String.fromCharCode(65 + idx)}</span> ${option}`;
-                button.onclick = () => selectAnswer(idx);
+                button.className = "w-full text-left p-4 rounded-lg border border-gray-300 bg-white/80 hover:bg-gray-200/80 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-white/80";
+                button.textContent = option;
+                button.onclick = () => selectAnswer(i);
                 quizOptionsContainer.appendChild(button);
             });
-
-            quiz5050Btn.disabled = usedHints.quiz50;
-            quizAddTimeBtn.disabled = usedHints.quizTime;
-            if (usedHints.quiz50) quiz5050Btn.textContent = '🔎 50:50 (ใช้แล้ว)';
-            if (usedHints.quizTime) quizAddTimeBtn.textContent = '⏱️ +10s (ใช้แล้ว)';
         }
 
         function renderMatchContent() {
             matchLeftColumn.innerHTML = '';
             matchRightColumn.innerHTML = '';
 
-            // Left column (fixed order)
-            matchPairs.forEach(p => {
-                const item = document.createElement('div');
-                item.className = 'draggable-item text-left px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/60 transition-all';
-                item.textContent = p.left;
-                item.dataset.key = p.key;
-                item.draggable = true;
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
-                if (matchedKeys.has(p.key)) item.classList.add('matched');
-                matchLeftColumn.appendChild(item);
+            // Create left items (draggable)
+            matchPairs.forEach(pair => {
+                const div = document.createElement('div');
+                div.textContent = pair.left;
+                div.dataset.key = pair.key;
+                div.draggable = true;
+                div.className = "draggable-item p-3 rounded-lg border border-gray-300 bg-white transition-all shadow-sm";
+                if (matchedKeys.has(pair.key)) {
+                    div.classList.add('matched');
+                }
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+                matchLeftColumn.appendChild(div);
             });
 
-            // Right column (shuffled order)
+            // Create right items (droppable) based on shuffled order
             rightOrder.forEach(key => {
-                const p = matchPairs.find(pair => pair.key === key);
-                const item = document.createElement('div');
-                item.className = 'drop-target text-left px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/60 transition-all';
-                item.textContent = p.right;
-                item.dataset.key = p.key;
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('dragleave', handleDragLeave);
-                item.addEventListener('drop', handleDrop);
-                if (matchedKeys.has(p.key)) item.classList.add('matched');
-                matchRightColumn.appendChild(item);
+                const pair = matchPairs.find(p => p.key === key);
+                const div = document.createElement('div');
+                div.textContent = pair.right;
+                div.dataset.key = pair.key;
+                div.className = "drop-target p-3 rounded-lg border-2 border-dashed border-gray-400 transition-colors";
+                if (matchedKeys.has(pair.key)) {
+                    div.classList.add('matched', 'border-solid', 'border-emerald-500/50', 'bg-emerald-100/80');
+                }
+                div.addEventListener('dragover', handleDragOver);
+                div.addEventListener('dragleave', handleDragLeave);
+                div.addEventListener('drop', handleDrop);
+                matchRightColumn.appendChild(div);
             });
         }
 
         function renderSummaryContent() {
-            stopTimer();
-            finalScore.textContent = `${score} / 200`;
+            finalScore.textContent = `${score} / 100`;
             finalRank.textContent = getRank(score);
-            summaryQuiz50.textContent = usedHints.quiz50 ? "✅" : "—";
-            summaryQuizTime.textContent = usedHints.quizTime ? "✅" : "—";
-            summaryMatchReveal.textContent = usedHints.matchReveal ? "✅" : "—";
-            summaryMatchTime.textContent = usedHints.matchTime ? "✅" : "—";
         }
 
-        function updateTimerDisplay() {
-            const targetTimer = scene === 'quiz' ? timerDisplay : matchTimerDisplay;
-            if (targetTimer) {
-                targetTimer.textContent = `${timeLeft}s`;
-                targetTimer.classList.toggle('text-rose-400', timeLeft <= 5);
-            }
-        }
-
-        function updateProgress() {
-            scoreDisplay.textContent = `คะแนน: ${score}`;
-            const quizProgress = (qIndex / QUIZ_QUESTIONS.length) * 100;
-            quizProgressBar.style.width = `${quizProgress}%`;
-
-            const quizDone = scene === 'match' || scene === 'summary' ? QUIZ_QUESTIONS.length : qIndex;
-            const matchDone = (matchPageIndex * 5) + (5 - remainingPairs);
-            const totalProgress = Math.round(((quizDone + matchDone) / totalItems) * 100);
-            totalProgressBar.style.width = `${totalProgress}%`;
-            totalProgressText.textContent = `${totalProgress}% เสร็จแล้ว`;
-        }
-
-        function showModal() {
-            playSound('click');
+        // --- Modals ---
+        function showInstructionModal() {
             instructionModal.classList.remove('opacity-0', 'pointer-events-none');
             instructionModal.querySelector('.modal-content').classList.remove('scale-95');
         }
-        function hideModal() {
-            playSound('click');
+
+        function hideInstructionModal() {
             instructionModal.classList.add('opacity-0', 'pointer-events-none');
             instructionModal.querySelector('.modal-content').classList.add('scale-95');
         }
@@ -823,35 +741,61 @@
         }
 
         // ---------- Event Listeners ----------
-        window.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('year').textContent = new Date().getFullYear();
 
-            // On first user interaction, initialize audio context
-            document.body.addEventListener('click', initAudio, { once: true });
+            const startQuizBtn = document.getElementById('start-quiz-btn');
+            const startMatchBtn = document.getElementById('start-match-btn');
 
-            const startGameBtn = document.getElementById('start-game-btn');
-            startGameBtn.addEventListener('click', () => { playSound('click'); startGame(); });
-            howToPlayBtn.addEventListener('click', showModal);
-            closeModalBtn.addEventListener('click', hideModal);
-            nextQuestionBtn.addEventListener('click', () => { playSound('click'); goNextQuiz(); });
+            startQuizBtn.addEventListener('click', () => {
+                playSound('click');
+                initAudio();
+                startQuizGame();
+            });
 
-            quiz5050Btn.addEventListener('click', useQuiz5050);
-            quizAddTimeBtn.addEventListener('click', useQuizAddTime);
-            quizSkipBtn.addEventListener('click', () => { playSound('click'); selectAnswer(null); });
+            startMatchBtn.addEventListener('click', () => {
+                playSound('click');
+                initAudio();
+                startMatchGame();
+            });
 
-            matchRevealBtn.addEventListener('click', useMatchReveal);
-            matchAddTimeBtn.addEventListener('click', useMatchAddTime);
-            matchSkipBtn.addEventListener('click', () => { playSound('incorrect'); handleMatchTimeout(); });
+            howToPlayBtn.addEventListener('click', () => {
+                playSound('click');
+                showInstructionModal();
+            });
 
+            closeModalBtn.addEventListener('click', () => {
+                playSound('click');
+                hideInstructionModal();
+            });
+
+            // Skip buttons
+            quizSkipBtn.addEventListener('click', () => selectAnswer(null));
+            matchSkipBtn.addEventListener('click', handleMatchTimeout);
+
+            // Summary buttons
             homeBtn.addEventListener('click', () => {
                 playSound('click');
-                stopTimer();
                 switchScene('intro');
-                render();
             });
-            restartBtn.addEventListener('click', () => { playSound('click'); startGame(); });
+            restartBtn.addEventListener('click', () => {
+                playSound('click');
+                if (currentGame === 'quiz') {
+                    startQuizGame();
+                } else if (currentGame === 'match') {
+                    startMatchGame();
+                }
+            });
 
-            render(); // Initial render
+            // Explanation modal button
+            nextQuestionBtn.addEventListener('click', goNextQuiz);
+
+            // Close modals with Escape key
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    hideInstructionModal();
+                }
+            });
         });
     </script>
 </body>
